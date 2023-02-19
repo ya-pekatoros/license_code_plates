@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+      
+        {% block main %}
+
+        {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+     
+    <main class="flex-grow-1">
+      <div class="container mt-3">
+        <div class="form-row">
+          <div class="col-12 col-md-10 col-lg-8 mx-auto border rounded-3 bg-light p-5">
+            <h1 class="display-3">Search for license plate code</h1>
+            <p class="lead">Insert the license plate code and tap to proceed</p>
+            <form action="{{ url_for('go_to_code') }}" method="get" required>
+              <div class="row">
+                <div class="col-12 col-xl-8 mb-3">
+                  {% if bad_code %}
+                  <input type="text" name="code" placeholder="for example: MAI" value="{{ bad_code }}" class="d-flex form-control form-control-lg">
+                  {% else %}
+                  <input type="text" name="code" placeholder="for example: MAI" value="" class="d-flex form-control form-control-lg">
+                  {% endif %}
+                </div>
+                <div class="col-xl-4 text-center">
+                  <input type="submit" class="btn btn-primary btn-lg ms-3 px-5 text-uppercase mx-3" value="Proceed">
+                </div>
+              </div>           
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+    {% endblock main %}

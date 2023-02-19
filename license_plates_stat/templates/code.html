@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+{% if messages %}
+{% for category, message in messages %}
+  <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<main class="flex-grow-1">
+  <div class="container-lg mt-3">
+    <h1>{{ code }} stats</h1>
+  </div>
+    <form action="{{ url_for('show_code', name=code) }}" method="get" required>
+      <div class="row mx-2">
+        <div class="col-xl-3 col-12 mb-3">
+          <input type="date" name="start_date" value="{{ start_date }}" class="d-flex form-control form-control-lg">
+        </div>
+        <div class="col-xl-3 col-12 mb-3">
+        <input type="date" name="end_date" value="{{ end_date }}" class="d-flex form-control form-control-lg">
+      </div>
+        <div class="col-xl-3 col-12 mb-3">
+          <input type="hidden" name="end_page" value="{{ end_page }}" />
+          <input type="hidden" name="ask_date" value="True" />
+          <input type="hidden" name="letter_id" value="{{ letter_id }}" />
+          <input type="submit" class="btn btn-primary btn-lg ms-3 px-5 text-uppercase mx-3" value="Proceed">
+        </div>
+      </div>           
+    </form>
+    <div class="row">
+      <div class="table-responsive col-xl-3 col-12 mx-2">
+        <table id="myTable" class="table table-bordered table-hover text-nowrap" data-test="urls">
+            <tbody>
+                <tr>
+                    <th>Date</th>
+                    <th>Rating</th>
+                    <th>Difference</th>
+                </tr>
+                {% if table_data %}
+                {% for value, date, difference in table_data %}
+                <tr>
+                  <td>{{ date }}</td>
+                  <td>{{ value }}</td>
+                  <td style="color: {% if difference > 0 %}green{% elif difference < 0 %}red{% endif %}">
+                    {% if difference > 0 %}+{{ difference }}
+                    {% elif difference < 0 %}-{{ abs(difference) }}
+                    {% else %}{{ difference }}
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+        <ul class="pagination">
+          <li class="page-item">
+            <form>
+            <input type="hidden" name="end_page" value="{{ end_page }}" />
+            <input type="hidden" name="page" value="1" />
+            <input type="hidden" name="change_page" value="True" />
+            <input type="hidden" name="letter_id" value="{{ letter_id }}" />
+            <input type="hidden" name="start_date" value="{{ start_date  }}" />
+            <input type="hidden" name="end_date" value="{{ end_date  }}" />
+            <input type="submit" class="btn btn-outline-primary btn-sm mx-2" value="1">
+            </form>
+          </li>
+          <li class="page-item">
+            <form>
+            <input type="hidden" name="end_page" value="{{ end_page }}" />
+            <input type="hidden" name="page" value="{{ page - 1 if page > 1 else 1 }}" />
+            <input type="hidden" name="change_page" value="True" />
+            <input type="hidden" name="letter_id" value="{{ letter_id }}" />
+            <input type="hidden" name="start_date" value="{{ start_date  }}" />
+            <input type="hidden" name="end_date" value="{{ end_date  }}" />
+            <input type="submit" class="btn btn-outline-primary btn-sm" value="Previous Page">
+            </form>
+          </li>
+          <li class="page-item">
+            <button type="button" class="btn btn-primary btn-sm mx-2">{{ page }}</button>
+          </li>
+          <li class="page-item">
+            <form>
+            <input type="hidden" name="end_page" value="{{ end_page }}" />
+            <input type="hidden" name="page" value="{{ page + 1 if page < end_page else end_page |int }}" />
+            <input type="hidden" name="change_page" value="True" />
+            <input type="hidden" name="letter_id" value="{{ letter_id }}" />
+            <input type="hidden" name="start_date" value="{{ start_date  }}" />
+            <input type="hidden" name="end_date" value="{{ end_date  }}" />
+            <input type="submit" class="btn btn-outline-primary btn-sm" value="Next page">
+            </form>
+          </li>
+          <li class="page-item">
+            <form>
+            <input type="hidden" name="end_page" value="{{ end_page }}" />
+            <input type="hidden" name="page" value="{{ end_page }}" />
+            <input type="hidden" name="change_page" value="True" />
+            <input type="hidden" name="letter_id" value="{{ letter_id }}" />
+            <input type="hidden" name="start_date" value="{{ start_date  }}" />
+            <input type="hidden" name="end_date" value="{{ end_date  }}" />
+            <input type="submit" class="btn btn-outline-primary btn-sm mx-2" value="Last page">
+            </form>
+          </li>
+        </ul>
+      </div>
+      <div class="col-xl-6 col-12">
+        <canvas id="myChart" width="600" height="400"></canvas>
+      </div>
+    </div>
+  <script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: {{ graph_dates|safe }},
+        datasets: [{
+          label: 'Rating for {{ code }}',
+          data: {{ graph_values|safe}},
+          fill: false,
+          borderColor: 'rgb(13, 110, 253)',
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+  
+  </script>
+</main>
+{% endblock main %}

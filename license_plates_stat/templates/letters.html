@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+        {% block main %}
+
+        {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+        <main class="flex-grow-1">
+          <div class="col-xl-3 col-12 mb-3">
+        </div>
+            <div class="container-lg mt-3">
+                <h1>Letters</h1>
+                <div class="table-responsive">
+                  <div class="row">
+                    <div class="mb-3 col-12 col-xl-3">
+                    <input type="text" id="myInput" onkeyup="myFunction()" class="form-control form-control-sm" placeholder="Search for codes..">
+                    </div>
+                    <div class="mb-3 col-6">
+                      <form method="post" action="{{ url_for('show_license_plates') }}" >
+                        <div class="row">
+                            <div class="col"><input type="text" class="form-control form-control-sm" name="letter_to_add" placeholder="add new, for example: MAI"></div>
+                            <div class="col"><input type="submit" class="btn btn-primary btn-sm" value="Add new code"></div>
+                        </div>
+                      </form>
+                    </div>
+                    </div>
+                    <table id="myTable" class="table table-bordered table-hover text-nowrap" data-test="urls">
+                        <tbody>
+                            <tr>
+                                <th>License codes</th>
+                            </tr>
+                            {% if data %}
+                            {% for letter in data %}
+                            <tr>
+                                <td>
+                                <a href="{{ url_for('show_code', name=letter) }}">  
+                                "{{ letter }}"
+                                </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <script>
+                function myFunction() {
+                  // Declare variables
+                  var input, filter, table, tr, td, i, txtValue;
+                  input = document.getElementById("myInput");
+                  filter = input.value.toUpperCase();
+                  table = document.getElementById("myTable");
+                  tr = table.getElementsByTagName("tr");
+                
+                  // Loop through all table rows, and hide those who don't match the search query
+                  for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[0];
+                    if (td) {
+                      txtValue = td.textContent || td.innerText;
+                      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                      } else {
+                        tr[i].style.display = "none";
+                      }
+                    }
+                  }
+                }
+                </script>
+        </main>
+    {% endblock main %}

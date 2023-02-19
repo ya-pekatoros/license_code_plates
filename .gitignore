@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+#Ignore virtual env
+.venv/
+
+#Ignore env
+.env
+
+db-project.dump
+
+#Ignore installed package
+dist/
+
+*.pyc
+.coverage
+coverage.xml

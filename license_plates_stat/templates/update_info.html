@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<main class="flex-grow-1">
+    <div class="container-lg mt-3">
+        <h1>Info about data updates</h1>
+            <div class="row">
+                <div class="col-xl-3 col-12 mb-3">
+                    <form method="post" action="{{ url_for('update_info') }}" >
+                        <input type="hidden" name="update" value="update">
+                        <input type="submit" class="btn btn-primary" value="Run update">
+                        </form>
+                </div>
+                <div class="col-xl-3 col-12 mb-3">
+                    <form method="get" action="{{ url_for('update_info') }}" >
+                        <input type="hidden" name="update" value="show_status">
+                        <input type="submit" class="btn btn-primary" value="Show update status">
+                        </form>
+              </div>
+                <div class="col-xl-3 col-12 mb-3">
+                    <form method="post" action="{{ url_for('update_info') }}" >
+                        <input type="hidden" name="update" value="stop">
+                        <input type="submit" class="btn btn-primary" value="Stop update">
+                        </form>
+                </div>
+                <div class="col-xl-3 col-12 mb-3">
+                    <form method="post" action="{{ url_for('update_info') }}" >
+                        <input type="hidden" name="update" value="set_auto_update">
+                        <input type="submit" class="btn btn-primary" value="Update and set auto update">
+                        </form>
+                </div>
+              </div>
+
+        <div>
+        {% if status %}
+        {% set statusupd, errors, sucesses, goal, undone = status %}
+        Update {{ statusupd }}, total to ipdate: {{ goal }}, successful: {{ sucesses }},
+        errors: {{ errors }}, remain to update: {{ undone }}.
+        {% endif %}
+        {% if status_auto %}
+            {{ status_auto }}
+        {% endif %}
+        </div>
+        <div class="table-responsive">
+            <table id="myTable" class="table table-bordered table-hover text-nowrap" data-test="urls">
+                <tbody>
+                    <tr>
+                        <th>Update id</th>
+                        <th>Update date</th>
+                        <th>Codes to update</th>
+                        <th>Update done for number of codes</th>
+                        <th>Update errors</th>
+                        <th>Update undone for number of codes</th>
+                    </tr>
+                    {% if upd_data %}
+                    {% for upd_id, upd_codes_number, upd_date, upd_done, upd_undone, upd_errors in upd_data %}
+                    <tr>
+                        <td>
+                        {{ upd_id|safe|int }}
+                        </td>
+                        <td>
+                        {{ upd_date }}
+                        </td>
+                        <td>
+                        {{ upd_codes_number }}
+                        </td>
+                        <td>
+                        {{ upd_done }}
+                        </td>
+                        <td>
+                        {{ upd_errors }}
+                        </td>
+                        <td>
+                        {{ upd_undone }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+{% endblock main %}
