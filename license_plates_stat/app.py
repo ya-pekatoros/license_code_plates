@@ -20,6 +20,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'weghudvhb9238232'
 
+
 @app.route('/')
 def index():
     return render_template(
@@ -226,50 +227,35 @@ def total_data():
         end_date=end_date,
     )
 
+update_data_daily = GetDataDaily()
+update_data = GetData()
 
 @app.route('/updateinfo', methods=['GET', 'POST'])
 def update_info():
+    connection = sqlite3.connect('data/database.db')
+    cur = connection.cursor()
     status = None
-    status_auto= None
     if request.method == 'POST':
         task = request.form['update']
         if task == 'update':
-            if 'update_data' not in globals():
-                global update_data
-                update_data = GetData()    
+            if not app.config.get('update_status'):
+                app.config['update_status'] = True
                 update_data.start()
         if task == 'set_auto_update':
-            if 'update_data_daily' not in globals():
-                global update_data_daily
-                update_data_daily = GetDataDaily()
+            if not app.config.get('update_daily_status'):
+                app.config['update_daily_status'] = True
+                app.config['update_daily_start_time'] = datetime.datetime.now()
+                status = 'Auto update setted'
                 update_data_daily.start()
-            else:
-                status_auto = update_data_daily.status
-        if task == 'stop':
-            if 'update_data' in globals():
-                update_data.stop = True
-                status = [update_data.status, update_data.errors, update_data.sucesses, update_data.goal, update_data.undone]
-                del update_data
-            if 'update_data_daily' in globals():
-                update_data_daily.stop = True
-                status_auto = update_data_daily.status
-                del update_data_daily
 
-    else:
-        if request.args.get('update') == 'show_status':
-            print(request.args.get('update'))
-            print(globals())
-            if 'update_data' in globals():
-                status = [update_data.status, update_data.errors, update_data.sucesses, update_data.goal, update_data.undone]
-    # last week data by default
-    connection = sqlite3.connect('data/database.db')
-    cur = connection.cursor()
-    upd_data = cur.execute("SELECT * FROM updates ORDER BY created_at",
+            else:
+                status = f"Auto updated was setted {session.get('update_daily_start_time').strftime('%Y-%m-%d %H:%M')}. Then next update will be at {(session.get('update_daily_start_time') + datetime.timedelta(days=1)).strftime('%Y-%m-%d %H:%M')}"
+
+    upd_data = cur.execute("SELECT * FROM updates ORDER BY created_at DESC",
     ).fetchall()
     return render_template(
         '/update_info.html',
         upd_data = upd_data,
-        status = status,
-        status_auto=status_auto
+        status = status
     )
 

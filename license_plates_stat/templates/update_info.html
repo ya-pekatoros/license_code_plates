@@ -13,16 +13,9 @@
                 </div>
                 <div class="col-xl-3 col-12 mb-3">
                     <form method="get" action="{{ url_for('update_info') }}" >
-                        <input type="hidden" name="update" value="show_status">
-                        <input type="submit" class="btn btn-primary" value="Show update status">
+                        <input type="submit" class="btn btn-primary" value="Regresh page">
                         </form>
               </div>
-                <div class="col-xl-3 col-12 mb-3">
-                    <form method="post" action="{{ url_for('update_info') }}" >
-                        <input type="hidden" name="update" value="stop">
-                        <input type="submit" class="btn btn-primary" value="Stop update">
-                        </form>
-                </div>
                 <div class="col-xl-3 col-12 mb-3">
                     <form method="post" action="{{ url_for('update_info') }}" >
                         <input type="hidden" name="update" value="set_auto_update">
@@ -33,14 +26,9 @@
 
         <div>
         {% if status %}
-        {% set statusupd, errors, sucesses, goal, undone = status %}
-        Update {{ statusupd }}, total to ipdate: {{ goal }}, successful: {{ sucesses }},
-        errors: {{ errors }}, remain to update: {{ undone }}.
+        {{ status }}
         {% endif %}
-        {% if status_auto %}
-            {{ status_auto }}
-        {% endif %}
-        </div>
+
         <div class="table-responsive">
             <table id="myTable" class="table table-bordered table-hover text-nowrap" data-test="urls">
                 <tbody>

@@ -11,16 +11,8 @@ SITE = r'https://www.fahrerbewertung.de/statistiken/kennzeichen/'
 
 class GetData(threading.Thread):
     def __init__(self):
-         super(GetData, self).__init__()
-
-    errors = 0
-    sucesses = 0
-    goal = 0
-    undone = 0
-    status = 'Not in process'
+        super(GetData, self).__init__()
     
-    stop = False
-
     def run(self):
         connection = sqlite3.connect('data/database.db')
         cur = connection.cursor()
@@ -34,19 +26,9 @@ class GetData(threading.Thread):
         connection.commit()
         update_id = cur.lastrowid
         today = datetime.datetime.now().date()
-        self.errors = 0
-        self.sucesses = 0
-        self.goal = 0
-        self.undone = 0
-        self.status = 'Not in process'
         for i, (letter,) in enumerate(letters):
             value = self.get_numbers(letter)
             (letter_id,) = cur.execute('SELECT id FROM letters WHERE letter=?', (letter,)).fetchone()
-            self.status = 'In process'
-            self.errors = error_count
-            self.sucesses = sucess_count
-            self.goal = len(letters)
-            self.undone = len(letters) - sucess_count - error_count
             current_value = cur.execute('SELECT id FROM letter_values WHERE letter_id=? AND created_at=?', (letter_id, today)).fetchone()
             if current_value:
                 (current_value_id,) = current_value
@@ -85,15 +67,7 @@ class GetData(threading.Thread):
                         (sucess_count, error_count, undone, update_id)
                     )
                     connection.commit()
-            if self.stop:
-                break
-        self.status = 'Not in process'
-        self.errors = error_count
-        self.sucesses = sucess_count
-        self.goal = len(letters)
-        self.undone = len(letters) - sucess_count - error_count
         connection.close()
-
 
     def get_numbers(self, l):
         url = SITE + l

@@ -7,15 +7,14 @@ import time
 
 #keep letters file in the same folder as this file
 
+my_rlock = threading.RLock()
 
 SITE = r'https://www.fahrerbewertung.de/statistiken/kennzeichen/'
 
 class GetDataDaily(threading.Thread):
     def __init__(self):
-         super(GetDataDaily, self).__init__()
+        super(GetDataDaily, self).__init__()
 
-    status = 'Not acive'
-    stop = False
 
     def run(self):
         while True:
@@ -32,7 +31,7 @@ class GetDataDaily(threading.Thread):
             update_id = cur.lastrowid
             today = datetime.datetime.now().date()
             for i, (letter,) in enumerate(letters):
-                self.status = f'Update in process, to update: {len(letters)}, errors: {error_count}, sucesses: {sucess_count}, undone: {undone}'
+                print('ok')
                 value = self.get_numbers(letter)
                 (letter_id,) = cur.execute('SELECT id FROM letters WHERE letter=?', (letter,)).fetchone()
                 current_value = cur.execute('SELECT id FROM letter_values WHERE letter_id=? AND created_at=?', (letter_id, today)).fetchone()
@@ -73,10 +72,7 @@ class GetDataDaily(threading.Thread):
                             (sucess_count, error_count, undone, update_id)
                         )
                         connection.commit()
-                if self.stop:
-                    break
             connection.close()
-            self.status = f'THe last update was {datetime.datetime.Utcnow().strftime("%Y-%m-%d %H-%M")} the next will be {(datetime.datetime.now()+datetime.timedelta(days=1)).strftime("%Y-%m-%d %H-%M")}. See result in the table below.'
             time.sleep(86400)
 
 

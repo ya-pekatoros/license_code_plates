@@ -27,3 +27,4 @@ for file in list_of_files:
         )
     connection.commit()
     connection.close()
+    print('ok')

@@ -44,7 +44,7 @@
                   <td>{{ value }}</td>
                   <td style="color: {% if difference > 0 %}green{% elif difference < 0 %}red{% endif %}">
                     {% if difference > 0 %}+{{ difference }}
-                    {% elif difference < 0 %}-{{ abs(difference) }}
+                    {% elif difference < 0 %}-{{ difference | abs }}
                     {% else %}{{ difference }}
                     {% endif %}
                   </td>

@@ -1,7 +1,4 @@
 #development variables
-PORT ?= 8000
-DB_NAME = third-project
-LOCAL_DB_USER = ypekatoros
 
 install:
 		poetry install
@@ -51,7 +48,7 @@ dev-server-run:
 		poetry run flask --app license_plates_stat:app run
 	
 start:
-		poetry run gunicorn -w 5 -b 0.0.0.0:$(PORT) page_analyzer:app
+		poetry run gunicorn -w 5 -b 0.0.0.0:8000 license_plates_stat:app
 
 lint:
 		{ \
