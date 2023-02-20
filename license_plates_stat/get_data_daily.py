@@ -7,8 +7,6 @@ import time
 
 #keep letters file in the same folder as this file
 
-my_rlock = threading.RLock()
-
 SITE = r'https://www.fahrerbewertung.de/statistiken/kennzeichen/'
 
 class GetDataDaily(threading.Thread):

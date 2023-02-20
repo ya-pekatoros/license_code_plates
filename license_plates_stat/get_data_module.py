@@ -6,7 +6,6 @@ import datetime
 
 #keep letters file in the same folder as this file
 
-
 SITE = r'https://www.fahrerbewertung.de/statistiken/kennzeichen/'
 
 class GetData(threading.Thread):
