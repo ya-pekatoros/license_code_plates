@@ -2,19 +2,15 @@
 
 Hello!
 
-This web app analysis the web page for its SEO affordability.
+This web app analysis the rating for license plates in one European Country and presents results. It also supports auto update of information from external web-resource.
 
-The app is available by link:
-    https://page-analyzer-app.up.railway.app/
 
 # Tech stack
 
 * Linux OS
 * python = "^3.10"
-* flask = "^2.2.2"
+* flask = "^2.2.3"
 * gunicorn = "^20.1.0"
-* psycopg2-binary = "^2.9.5"
-* python-dotenv = "^0.21.1"
-* validators = "^0.20.0"
 * requests = "^2.28.2"
 * bs4 = "^0.0.1"
+* pandas = "^1.5.3"
