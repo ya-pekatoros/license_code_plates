@@ -11,14 +11,23 @@ from flask import (
 import sqlite3
 import datetime
 import json
+import atexit
+import os
 
-from license_plates_stat.get_data_module import GetData
-from license_plates_stat.get_data_daily import GetDataDaily
+from license_plates_stat.scheduler import init_scheduler
 
 
 app = Flask(__name__)
+init_scheduler()
 
 app.config['SECRET_KEY'] = 'weghudvhb9238232'
+scheduler_file = 'scheduler.lock'
+
+
+@atexit.register
+def delete_scheduler_file():
+    if os.path.exists(scheduler_file):
+        os.remove(scheduler_file)
 
 
 @app.route('/')
@@ -227,35 +236,15 @@ def total_data():
         end_date=end_date,
     )
 
-update_data_daily = GetDataDaily()
-update_data = GetData()
 
 @app.route('/updateinfo', methods=['GET', 'POST'])
 def update_info():
     connection = sqlite3.connect('data/database.db')
     cur = connection.cursor()
-    status = None
-    if request.method == 'POST':
-        task = request.form['update']
-        if task == 'update':
-            if not app.config.get('update_status'):
-                app.config['update_status'] = True
-                update_data.start()
-        if task == 'set_auto_update':
-            if not app.config.get('update_daily_status'):
-                app.config['update_daily_status'] = True
-                app.config['update_daily_start_time'] = datetime.datetime.now()
-                status = 'Auto update setted'
-                update_data_daily.start()
 
-            else:
-                status = f"Auto updated was setted {session.get('update_daily_start_time').strftime('%Y-%m-%d %H:%M')}. Then next update will be at {(session.get('update_daily_start_time') + datetime.timedelta(days=1)).strftime('%Y-%m-%d %H:%M')}"
-
-    upd_data = cur.execute("SELECT * FROM updates ORDER BY created_at DESC",
+    upd_data = cur.execute("SELECT * FROM updates ORDER BY id DESC",
     ).fetchall()
     return render_template(
         '/update_info.html',
         upd_data = upd_data,
-        status = status
     )
-

@@ -68,6 +68,9 @@ class GetData(threading.Thread):
                     connection.commit()
         connection.close()
 
+    def update(self):
+        self.run()
+
     def get_numbers(self, l):
         url = SITE + l
         try:
