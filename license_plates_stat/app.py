@@ -120,8 +120,8 @@ def show_code(name):
     else:
         page = 1
         (letter_id,) = cur.execute('SELECT id FROM letters WHERE letter = ?', (name,)).fetchone()
-        start_date = datetime.datetime.today().date()
-        end_date = datetime.datetime.today().date() - datetime.timedelta(days=30)
+        start_date = datetime.datetime.today().date() - datetime.timedelta(days=30)
+        end_date = datetime.datetime.today().date()
         start_date = start_date.strftime("%Y-%m-%d")
         end_date = end_date.strftime("%Y-%m-%d")
         letter_data = cur.execute('SELECT value, created_at FROM letter_values WHERE letter_id = ? AND created_at >= ? AND created_at <= ?', (letter_id, start_date, end_date)).fetchall()
@@ -201,8 +201,8 @@ def total_data():
     else:
         page = 1
         start_date = datetime.datetime.today().date()
-        end_date = datetime.datetime.today().date() - datetime.timedelta(days=30)
-        start_date = start_date.strftime("%Y-%m-%d")
+        end_date = datetime.datetime.today().date()
+        start_date = start_date.strftime("%Y-%m-%d") - datetime.timedelta(days=30)
         end_date = end_date.strftime("%Y-%m-%d")
         letter_data = cur.execute('SELECT SUM(value) as total_value, created_at FROM letter_values WHERE created_at >= ? AND created_at <= ? GROUP BY created_at', (start_date, end_date)).fetchall()
         pages = 1
@@ -212,8 +212,8 @@ def total_data():
         if i == 0:
             previous_date = datetime.datetime.strptime(letter_data[i][1], '%Y-%m-%d').date() - datetime.timedelta(days=1)
             previous_date_data = cur.execute('SELECT SUM(value) as total_value FROM letter_values WHERE created_at = ?', (previous_date,)).fetchone()
-            if previous_date_data:
-                (previous_value,) = previous_date_data
+            (previous_value,) = previous_date_data
+            if previous_value:
                 difference = value - previous_value 
             else:
                 difference = 0
