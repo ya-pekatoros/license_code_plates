@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Yaroslav Pekatoros <y.pekatoros@gmail.com>"]
 readme = "README.md"
-packages = [{include = "license_plates_stat"}]
+packages = [{ include = "license_plates_stat" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"

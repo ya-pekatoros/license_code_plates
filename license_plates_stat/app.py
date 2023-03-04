@@ -11,23 +11,10 @@ from flask import (
 import sqlite3
 import datetime
 import json
-import atexit
-import os
-
-from license_plates_stat.scheduler import init_scheduler
 
 
 app = Flask(__name__)
-init_scheduler()
-
 app.config['SECRET_KEY'] = 'weghudvhb9238232'
-scheduler_file = 'scheduler.lock'
-
-
-@atexit.register
-def delete_scheduler_file():
-    if os.path.exists(scheduler_file):
-        os.remove(scheduler_file)
 
 
 @app.route('/')

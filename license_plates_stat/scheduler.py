@@ -1,20 +1,26 @@
+import time
+import subprocess
 from apscheduler.schedulers.background import BackgroundScheduler
-import os
-import random
-from time import sleep
-
 
 from license_plates_stat.get_data_module import GetData
 
-update_data = GetData()
-scheduler_file = 'scheduler.lock'
 
+update_data = GetData()
 
 def init_scheduler():
-    sleep(random.random())
-    if not os.path.exists(scheduler_file):
-        with open(scheduler_file, 'w') as f:
-            f.write('scheduler lock file')
-        scheduler = BackgroundScheduler()
-        scheduler.add_job(update_data.update, 'cron', hour=22, minute=30)
-        scheduler.start()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(update_data.update, 'cron', hour=22, minute=30)
+    scheduler.start()
+
+
+def run_gunicorn():
+    subprocess.run(["poetry", "run", "gunicorn", "-w", "5", "-b", "0.0.0.0:8000", "license_plates_stat:app"])
+
+if __name__ == "__main__":
+    init_scheduler()
+    run_gunicorn()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        scheduler.shutdown()
